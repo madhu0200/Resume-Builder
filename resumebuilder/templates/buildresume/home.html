@@ -1,0 +1,508 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Builder</title>
+
+    <link rel="stylesheet" href="{% static 'buildresume/home.css' %}">
+</head>
+<body>
+
+<div class="main-container">
+
+    <!-- Sidebar -->
+
+    <div class="sidebar">
+
+        <h2>Resume Builder</h2>
+
+        <ul>
+
+            <li onclick="showSection('personal')">
+                Personal Details
+            </li>
+
+            <li onclick="showSection('education')">
+                Education
+            </li>
+
+            <li onclick="showSection('skills')">
+                Skills
+            </li>
+
+            <li onclick="showSection('experience')">
+                Professional Experience
+            </li>
+
+            <li onclick="showSection('projects')">
+                Projects
+            </li>
+
+        </ul>
+
+    </div>
+
+
+    <!-- Content -->
+
+    <div class="content">
+
+        <!-- PERSONAL DETAILS -->
+
+<div class="section active" id="personal">
+
+    <h1>Personal Details</h1>
+    {% for message in messages %}
+    <span class="{{ message.tags }}">{{message}}</span>
+    {%endfor %}
+
+   
+    <form method="POST" action="{% url 'personal_details' %}">
+
+    
+
+
+        {% csrf_token %}
+        {% if personal_details %}
+
+        <div class="input-group">
+            <label>Full Name</label>
+            <input type="text" name="full_name" value="{{personal_details.FullName}}">
+        </div>
+
+        <div class="input-group">
+            <label>Location</label>
+            <input type="text" name="location" value="{{personal_details.Location}}">
+        </div>
+
+        <div class="input-group">
+            <label>Mobile</label>
+            <input type="text" name="mobile" value="{{personal_details.mobile}}">
+        </div>
+
+        <div class="input-group">
+            <label>Email</label>
+            <input type="email" name="email" value="{{personal_details.email}}">
+        </div>
+
+        <div class="input-group">
+            <label>LinkedIn</label>
+            <input type="url" name="linkedin" value="{{personal_details.linkedIn}}">
+        </div>
+
+        <div class="input-group">
+            <label>GitHub</label>
+            <input type="url" name="github" value="{{personal_details.gitLink}}">
+        </div>
+
+        <div class="input-group">
+            <label>Professional Summary</label>
+            <textarea name="summary" >{{personal_details.professionSummary}}</textarea>
+        </div>
+        {% endif %}
+
+        <button type="submit" class="submit-btn">
+           {% if personal_details %} Update 
+           {%else%}
+           Save 
+           {%endif%} Personal Details
+        </button>
+
+    </form>
+
+</div>
+
+
+
+<!-- EDUCATION -->
+
+<div class="section" id="education">
+
+    <h1>
+        Education
+        
+    </h1>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <div id="education-container">
+
+            <div class="card">
+
+                <div class="input-group">
+                    <label>Course</label>
+                    <input type="text" name="course[]">
+                </div>
+
+                <div class="row">
+
+                    <div class="input-group">
+                        <label>From</label>
+                        <input type="month" name="edu_from[]">
+                    </div>
+
+                    <div class="input-group">
+                        <label>To</label>
+                        <input type="month" name="edu_to[]">
+                    </div>
+
+                </div>
+
+                <div class="input-group">
+                    <label>College Name</label>
+                    <input type="text" name="college[]">
+                </div>
+
+                <div class="input-group">
+                    <label>CGPA / Percentage</label>
+                    <input type="text" name="cgpa[]">
+                </div>
+
+            </div>
+
+        </div>
+        <button type="button" class="add-btn" onclick="addEducation()">
+            Add Education
+        </button>
+        <button type="submit" class="submit-btn">
+            Save Education
+        </button>
+        
+
+    </form>
+
+</div>
+
+
+
+<!-- SKILLS -->
+
+<div class="section" id="skills">
+
+    <h1>
+        Skills
+        <button type="button" class="add-btn" onclick="addSkill()">
+            +
+        </button>
+    </h1>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <div id="skills-container">
+
+            <div class="card">
+
+                <div class="row">
+
+                    <div class="input-group">
+                        <label>Skill Category</label>
+                        <input type="text" name="skill_key[]">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Skills</label>
+                        <input type="text" name="skill_value[]">
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <button type="submit" class="submit-btn">
+            Save Skills
+        </button>
+
+    </form>
+
+</div>
+
+
+
+<!-- EXPERIENCE -->
+
+<div class="section" id="experience">
+
+    <h1>
+        Professional Experience
+        <button type="button" class="add-btn" onclick="addExperience()">
+            +
+        </button>
+    </h1>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <div id="experience-container">
+
+            <div class="card">
+
+                <div class="input-group">
+                    <label>Company Name</label>
+                    <input type="text" name="company[]">
+                </div>
+
+                <div class="input-group">
+                    <label>Location</label>
+                    <input type="text" name="company_location[]">
+                </div>
+
+                <div class="row">
+
+                    <div class="input-group">
+                        <label>From</label>
+                        <input type="month" name="exp_from[]">
+                    </div>
+
+                    <div class="input-group">
+                        <label>To</label>
+                        <input type="month" name="exp_to[]">
+                    </div>
+
+                </div>
+
+                <div class="input-group">
+                    <label>Description</label>
+                    <textarea name="experience_description[]"></textarea>
+                </div>
+
+            </div>
+
+        </div>
+
+        <button type="submit" class="submit-btn">
+            Save Experience
+        </button>
+
+    </form>
+
+</div>
+
+
+
+<!-- PROJECTS -->
+
+<div class="section" id="projects">
+
+    <h1>
+        Projects
+        <button type="button" class="add-btn" onclick="addProject()">
+            +
+        </button>
+    </h1>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <div id="projects-container">
+
+            <div class="card">
+
+                <div class="input-group">
+                    <label>Project Name</label>
+                    <input type="text" name="project_name[]">
+                </div>
+
+                <div class="input-group">
+                    <label>Description</label>
+                    <textarea name="project_description[]"></textarea>
+                </div>
+
+            </div>
+
+        </div>
+
+        <button type="submit" class="submit-btn">
+            Save Projects
+        </button>
+
+    </form>
+
+</div>
+
+    </div>
+
+</div>
+
+<script>
+
+    function showSection(sectionId){
+
+        const sections = document.querySelectorAll('.section');
+
+        sections.forEach(section => {
+            section.classList.remove('active');
+        });
+
+        document.getElementById(sectionId).classList.add('active');
+    }
+    function removeCard(button){
+
+button.parentElement.remove();
+
+}
+
+    function addEducation(){
+
+let container = document.getElementById('education-container');
+
+let html = `
+
+<div class="card">
+    
+
+    <div class="input-group">
+        <label>Course</label>
+        <input type="text" name="course[]">
+    </div>
+
+    <div class="row">
+
+        <div class="input-group">
+            <label>From</label>
+            <input type="month" name="edu_from[]">
+        </div>
+
+        <div class="input-group">
+            <label>To</label>
+            <input type="month" name="edu_to[]">
+        </div>
+
+    </div>
+
+    <div class="input-group">
+        <label>College Name</label>
+        <input type="text" name="college[]">
+    </div>
+
+    <div class="input-group">
+        <label>CGPA / Percentage</label>
+        <input type="text" name="cgpa[]">
+    </div>
+    <button type="button"
+                class="delete-btn"
+                onclick="removeCard(this)">
+            Delete
+        </button>
+
+</div>
+
+`;
+
+container.insertAdjacentHTML('beforeend', html);
+}
+function addSkill(){
+
+let container = document.getElementById('skills-container');
+
+let html = `
+<hr style="border:2px solid black"> 
+
+<div class="card">
+
+    <div class="row">
+
+        <div class="input-group">
+            <label>Skill Category</label>
+            <input type="text" name="skill_key[]">
+        </div>
+
+        <div class="input-group">
+            <label>Skills</label>
+            <input type="text" name="skill_value[]">
+        </div>
+
+    </div>
+
+</div>
+`;
+
+container.insertAdjacentHTML('beforeend', html);
+}
+
+
+
+function addExperience(){
+
+let container = document.getElementById('experience-container');
+
+let html = `
+<hr style="border:2px solid black"> 
+
+<div class="card">
+
+    <div class="input-group">
+        <label>Company Name</label>
+        <input type="text" name="company[]">
+    </div>
+
+    <div class="input-group">
+        <label>Location</label>
+        <input type="text" name="company_location[]">
+    </div>
+
+    <div class="row">
+
+        <div class="input-group">
+            <label>From</label>
+            <input type="month" name="exp_from[]">
+        </div>
+
+        <div class="input-group">
+            <label>To</label>
+            <input type="month" name="exp_to[]">
+        </div>
+
+    </div>
+
+    <div class="input-group">
+        <label>Description</label>
+        <textarea name="experience_description[]"></textarea>
+    </div>
+
+</div>
+`;
+
+container.insertAdjacentHTML('beforeend', html);
+}
+
+
+
+function addProject(){
+
+let container = document.getElementById('projects-container');
+
+let html = `
+<hr style="border:2px solid black"> 
+
+<div class="card">
+
+    <div class="input-group">
+        <label>Project Name</label>
+        <input type="text" name="project_name[]">
+    </div>
+
+    <div class="input-group">
+        <label>Description</label>
+        <textarea name="project_description[]"></textarea>
+    </div>
+
+</div>
+`;
+
+container.insertAdjacentHTML('beforeend', html);
+}
+
+</script>
+
+</body>
+</html>

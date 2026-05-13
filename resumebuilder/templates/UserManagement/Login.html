@@ -11,10 +11,11 @@
 <body>
     <div class="login-container">
         <h2>Login Form</h2>
-        <form action="#" method="POST" class="login-form">
+        <form action="{% url 'login'%}" method="POST" class="login-form">
+            {% csrf_token %}
             <div class="input-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" required>
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
             </div>
             <div class="input-group">
                 <label for="password">Password</label>
@@ -23,8 +24,11 @@
             <button type="submit" class="login-btn">Login</button>
         </form>
         <div class="signup-link">
-            <p>Don't have an account? <a href="#">Sign up</a></p>
+            <p>Don't have an account? <a href="{% url 'register'%}">Sign up</a></p>
         </div>
+        {% for message in messages %}
+        <span style="color:red;">{{message}}</span>
+        {% endfor %}
     </div>
 </body>
 </html>
