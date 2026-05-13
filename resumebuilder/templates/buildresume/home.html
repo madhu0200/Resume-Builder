@@ -10,6 +10,8 @@
 </head>
 <body>
 
+    
+
 <div class="main-container">
 
     <!-- Sidebar -->
@@ -54,9 +56,7 @@
 <div class="section active" id="personal">
 
     <h1>Personal Details</h1>
-    {% for message in messages %}
-    <span class="{{ message.tags }}">{{message}}</span>
-    {%endfor %}
+    
 
    
     <form method="POST" action="{% url 'personal_details' %}">
@@ -65,13 +65,12 @@
 
 
         {% csrf_token %}
-        {% if personal_details %}
 
         <div class="input-group">
             <label>Full Name</label>
             <input type="text" name="full_name" value="{{personal_details.FullName}}">
         </div>
-
+        <div class="row">
         <div class="input-group">
             <label>Location</label>
             <input type="text" name="location" value="{{personal_details.Location}}">
@@ -86,7 +85,8 @@
             <label>Email</label>
             <input type="email" name="email" value="{{personal_details.email}}">
         </div>
-
+        </div>
+        <div class="row">
         <div class="input-group">
             <label>LinkedIn</label>
             <input type="url" name="linkedin" value="{{personal_details.linkedIn}}">
@@ -96,12 +96,12 @@
             <label>GitHub</label>
             <input type="url" name="github" value="{{personal_details.gitLink}}">
         </div>
+        </div>
 
         <div class="input-group">
             <label>Professional Summary</label>
             <textarea name="summary" >{{personal_details.professionSummary}}</textarea>
         </div>
-        {% endif %}
 
         <button type="submit" class="submit-btn">
            {% if personal_details %} Update 
@@ -125,42 +125,58 @@
         
     </h1>
 
-    <form method="POST">
+    <form method="POST" url="{% url 'education_details' %}">
 
         {% csrf_token %}
 
         <div id="education-container">
 
+            {% for education in education_details %}
+
             <div class="card">
 
                 <div class="input-group">
                     <label>Course</label>
-                    <input type="text" name="course[]">
+                    <input type="text" name="course" value="{{education.course}}">
                 </div>
 
                 <div class="row">
 
                     <div class="input-group">
                         <label>From</label>
-                        <input type="month" name="edu_from[]">
+                        <input type="date" name="edu_from" value="{{education.edu_from|date:'Y-m-d'}}">
                     </div>
 
                     <div class="input-group">
                         <label>To</label>
-                        <input type="month" name="edu_to[]">
+                        <input type="date" name="edu_to" value="{{education.edu_to|date:'Y-m-d'}}" >
                     </div>
 
                 </div>
 
-                <div class="input-group">
+                <div class="row">
+                   <div class="input-group">
                     <label>College Name</label>
-                    <input type="text" name="college[]">
+                    <input type="text" name="college" value="{{education.college}}">
                 </div>
 
                 <div class="input-group">
                     <label>CGPA / Percentage</label>
-                    <input type="text" name="cgpa[]">
+                    <input type="text" name="cgpa" value="{{education.cgpa}}">
                 </div>
+                {% if not forloop.first %}
+                <button type="button"
+                        class="delete-btn"
+                        onclick="removeCard(this)">
+                    Delete
+                </button>
+            {% endif %}
+                    
+
+            </div>
+            {% endfor %}
+
+                
 
             </div>
 
@@ -332,8 +348,20 @@
     </div>
 
 </div>
+{% if messages %}
+<script>
+    {% for message in messages %}
+    alert("{{ message }}");
+    {% endfor %}
+</script>
+{% endif %}
+
 
 <script>
+
+
+    
+
 
     function showSection(sectionId){
 
@@ -362,31 +390,32 @@ let html = `
 
     <div class="input-group">
         <label>Course</label>
-        <input type="text" name="course[]">
+        <input type="text" name="course" required>
     </div>
 
     <div class="row">
 
         <div class="input-group">
             <label>From</label>
-            <input type="month" name="edu_from[]">
+            <input type="date" name="edu_from" required>
         </div>
 
         <div class="input-group">
             <label>To</label>
-            <input type="month" name="edu_to[]">
+            <input type="date" name="edu_to" required>
         </div>
 
     </div>
-
+    <div class="row">
     <div class="input-group">
         <label>College Name</label>
-        <input type="text" name="college[]">
+        <input type="text" name="college" required>
     </div>
 
     <div class="input-group">
         <label>CGPA / Percentage</label>
-        <input type="text" name="cgpa[]">
+        <input type="text" name="cgpa" required>
+    </div>
     </div>
     <button type="button"
                 class="delete-btn"
