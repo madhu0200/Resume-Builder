@@ -125,71 +125,81 @@
         
     </h1>
 
-    <form method="POST" url="{% url 'education_details' %}">
+   <form method="POST" action="{% url 'education_details' %}">
+    {% csrf_token %}
 
-        {% csrf_token %}
-
-        <div id="education-container">
-
+    <div id="education-container">
+        {% if education_details %}
             {% for education in education_details %}
-
             <div class="card">
-
                 <div class="input-group">
                     <label>Course</label>
-                    <input type="text" name="course" value="{{education.course}}">
+                    <input type="text" name="course" value="{{ education.course }}">
                 </div>
 
                 <div class="row">
-
                     <div class="input-group">
                         <label>From</label>
-                        <input type="date" name="edu_from" value="{{education.edu_from|date:'Y-m-d'}}">
+                        <input type="date" name="edu_from" value="{{ education.edu_from|date:'Y-m-d' }}">
                     </div>
-
                     <div class="input-group">
                         <label>To</label>
-                        <input type="date" name="edu_to" value="{{education.edu_to|date:'Y-m-d'}}" >
+                        <input type="date" name="edu_to" value="{{ education.edu_to|date:'Y-m-d' }}">
                     </div>
-
                 </div>
 
                 <div class="row">
-                   <div class="input-group">
-                    <label>College Name</label>
-                    <input type="text" name="college" value="{{education.college}}">
-                </div>
-
-                <div class="input-group">
-                    <label>CGPA / Percentage</label>
-                    <input type="text" name="cgpa" value="{{education.cgpa}}">
+                    <div class="input-group">
+                        <label>College Name</label>
+                        <input type="text" name="college" value="{{ education.college }}">
+                    </div>
+                    <div class="input-group">
+                        <label>CGPA / Percentage</label>
+                        <input type="text" name="cgpa" value="{{ education.cgpa }}">
+                    </div>
+                    
                 </div>
                 {% if not forloop.first %}
-                <button type="button"
-                        class="delete-btn"
-                        onclick="removeCard(this)">
-                    Delete
-                </button>
-            {% endif %}
-                    
-
+                    <button type="button" class="delete-btn" onclick="removeCard(this)">Delete</button>
+                    {% endif %}
             </div>
             {% endfor %}
+        {% else %}
+            <!-- Show one blank card if no records exist -->
+            <div class="card">
+                <div class="input-group">
+                    <label>Course</label>
+                    <input type="text" name="course">
+                </div>
 
-                
+                <div class="row">
+                    <div class="input-group">
+                        <label>From</label>
+                        <input type="date" name="edu_from">
+                    </div>
+                    <div class="input-group">
+                        <label>To</label>
+                        <input type="date" name="edu_to">
+                    </div>
+                </div>
 
+                <div class="row">
+                    <div class="input-group">
+                        <label>College Name</label>
+                        <input type="text" name="college">
+                    </div>
+                    <div class="input-group">
+                        <label>CGPA / Percentage</label>
+                        <input type="text" name="cgpa">
+                    </div>
+                </div>
             </div>
+        {% endif %}
+    </div>
 
-        </div>
-        <button type="button" class="add-btn" onclick="addEducation()">
-            Add Education
-        </button>
-        <button type="submit" class="submit-btn">
-            Save Education
-        </button>
-        
-
-    </form>
+    <button type="button" class="add-btn" onclick="addEducation()">Add Education</button>
+    <button type="submit" class="submit-btn">Save Education</button>
+</form>
 
 </div>
 
@@ -201,16 +211,18 @@
 
     <h1>
         Skills
-        <button type="button" class="add-btn" onclick="addSkill()">
-            +
-        </button>
+        
     </h1>
 
-    <form method="POST">
+    <form method="POST" action="{%url 'skills_details' %}">
 
         {% csrf_token %}
 
         <div id="skills-container">
+
+            {% if skills_details %}
+
+            {% for skill in skills_details %}
 
             <div class="card">
 
@@ -218,20 +230,54 @@
 
                     <div class="input-group">
                         <label>Skill Category</label>
-                        <input type="text" name="skill_key[]">
+                        <input type="text" name="key" value="{{skill.key}}" placeholder="Programming langguages">
                     </div>
 
                     <div class="input-group">
                         <label>Skills</label>
-                        <input type="text" name="skill_value[]">
+                        <input type="text" name="value" value="{{skill.value}}" placeholder="Python, Java, c etc">
+                    </div>
+
+                </div>
+                {% if not forloop.first %}
+                    <button type="button" class="delete-btn" onclick="removeCard(this)">Delete</button>
+                {% endif %}
+
+            </div>
+           
+
+            
+
+
+            {% endfor %}
+
+            {% else %}
+
+            <div class="card">
+
+                <div class="row">
+
+                    <div class="input-group">
+                        <label>Skill Category</label>
+                        <input type="text" name="key" placeholder="Programming langguages">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Skills</label>
+                        <input type="text" name="value" placeholder="Python, Java, c etc">
                     </div>
 
                 </div>
 
-            </div>
+            </div> 
+           
+
+            {% endif %}
 
         </div>
-
+ <button type="button" class="add-btn" onclick="addSkill()">
+            Add Skills
+        </button>
         <button type="submit" class="submit-btn">
             Save Skills
         </button>
@@ -248,51 +294,74 @@
 
     <h1>
         Professional Experience
-        <button type="button" class="add-btn" onclick="addExperience()">
-            +
-        </button>
+        
     </h1>
 
-    <form method="POST">
+    <form method="POST" action="{% url 'professional_details' %}">
 
         {% csrf_token %}
 
-        <div id="experience-container">
-
+       <div id="experience-container">
+    {% if professional_details %}
+        {% for experience in professional_details %}
             <div class="card">
-
                 <div class="input-group">
                     <label>Company Name</label>
-                    <input type="text" name="company[]">
+                    <input type="text" name="company" value="{{ experience.company }}">
                 </div>
-
                 <div class="input-group">
                     <label>Location</label>
-                    <input type="text" name="company_location[]">
+                    <input type="text" name="company_location" value="{{ experience.location }}">
                 </div>
-
                 <div class="row">
-
                     <div class="input-group">
                         <label>From</label>
-                        <input type="month" name="exp_from[]">
+                        <input type="date" name="exp_from" value="{{ experience.exp_from|date:'Y-m-d' }}">
                     </div>
-
                     <div class="input-group">
                         <label>To</label>
-                        <input type="month" name="exp_to[]">
+                        <input type="date" name="exp_to" value="{{ experience.exp_to|date:'Y-m-d' }}">
                     </div>
-
                 </div>
-
                 <div class="input-group">
                     <label>Description</label>
-                    <textarea name="experience_description[]"></textarea>
+                    <textarea name="experience_description">{{ experience.description }}</textarea>
                 </div>
-
+                {% if not forloop.first %}
+                    <button type="button" class="delete-btn" onclick="removeCard(this)">Delete</button>
+                {% endif %}
             </div>
-
+        {% endfor %}
+    {% else %}
+        <div class="card">
+            <div class="input-group">
+                <label>Company Name</label>
+                <input type="text" name="company">
+            </div>
+            <div class="input-group">
+                <label>Location</label>
+                <input type="text" name="company_location">
+            </div>
+            <div class="row">
+                <div class="input-group">
+                    <label>From</label>
+                    <input type="date" name="exp_from">
+                </div>
+                <div class="input-group">
+                    <label>To</label>
+                    <input type="date" name="exp_to">
+                </div>
+            </div>
+            <div class="input-group">
+                <label>Description</label>
+                <textarea name="experience_description"></textarea>
+            </div>
         </div>
+    {% endif %}
+</div>
+ <button type="button" class="add-btn" onclick="addExperience()">
+            Add Experience
+        </button>
 
         <button type="submit" class="submit-btn">
             Save Experience
@@ -310,38 +379,51 @@
 
     <h1>
         Projects
-        <button type="button" class="add-btn" onclick="addProject()">
-            +
-        </button>
+       
     </h1>
 
-    <form method="POST">
+  <form method="POST" action="{% url 'project_details' %}">
+    {% csrf_token %}
 
-        {% csrf_token %}
-
-        <div id="projects-container">
-
+    <div id="projects-container">
+        {% if project_details %}
+            {% for project in project_details %}
             <div class="card">
-
                 <div class="input-group">
                     <label>Project Name</label>
-                    <input type="text" name="project_name[]">
+                    <input type="text" name="project_name" value="{{ project.name }}">
                 </div>
 
                 <div class="input-group">
                     <label>Description</label>
-                    <textarea name="project_description[]"></textarea>
+                    <textarea name="project_description">{{ project.description }}</textarea>
                 </div>
 
+                {% if not forloop.first %}
+                <button type="button" class="delete-btn" onclick="removeCard(this)">Delete</button>
+                {% endif %}
             </div>
+            {% endfor %}
+        {% else %}
+            <!-- Show one blank card if no records exist -->
+            <div class="card">
+                <div class="input-group">
+                    <label>Project Name</label>
+                    <input type="text" name="project_name">
+                </div>
 
-        </div>
+                <div class="input-group">
+                    <label>Description</label>
+                    <textarea name="project_description"></textarea>
+                </div>
+            </div>
+        {% endif %}
+    </div>
 
-        <button type="submit" class="submit-btn">
-            Save Projects
-        </button>
+    <button type="button" class="add-btn" onclick="addProject()">Add Project</button>
+    <button type="submit" class="submit-btn">Save Projects</button>
+</form>
 
-    </form>
 
 </div>
 
@@ -434,7 +516,6 @@ function addSkill(){
 let container = document.getElementById('skills-container');
 
 let html = `
-<hr style="border:2px solid black"> 
 
 <div class="card">
 
@@ -442,15 +523,20 @@ let html = `
 
         <div class="input-group">
             <label>Skill Category</label>
-            <input type="text" name="skill_key[]">
+            <input type="text" name="key" required>
         </div>
 
         <div class="input-group">
             <label>Skills</label>
-            <input type="text" name="skill_value[]">
+            <input type="text" name="value" required>
         </div>
 
     </div>
+    <button type="button"
+                class="delete-btn"
+                onclick="removeCard(this)">
+            Delete
+    </button>
 
 </div>
 `;
@@ -465,38 +551,42 @@ function addExperience(){
 let container = document.getElementById('experience-container');
 
 let html = `
-<hr style="border:2px solid black"> 
 
 <div class="card">
 
     <div class="input-group">
         <label>Company Name</label>
-        <input type="text" name="company[]">
+        <input type="text" name="company" required>
     </div>
 
     <div class="input-group">
         <label>Location</label>
-        <input type="text" name="company_location[]">
+        <input type="text" name="company_location" required>
     </div>
 
     <div class="row">
 
         <div class="input-group">
             <label>From</label>
-            <input type="month" name="exp_from[]">
+            <input type="date" name="exp_from" required>
         </div>
 
         <div class="input-group">
             <label>To</label>
-            <input type="month" name="exp_to[]">
+            <input type="date" name="exp_to" required>
         </div>
 
     </div>
 
     <div class="input-group">
         <label>Description</label>
-        <textarea name="experience_description[]"></textarea>
+        <textarea name="experience_description" required></textarea>
     </div>
+    <button type="button"
+                class="delete-btn"
+                onclick="removeCard(this)">
+            Delete
+    </button>
 
 </div>
 `;
@@ -511,19 +601,23 @@ function addProject(){
 let container = document.getElementById('projects-container');
 
 let html = `
-<hr style="border:2px solid black"> 
 
 <div class="card">
 
     <div class="input-group">
         <label>Project Name</label>
-        <input type="text" name="project_name[]">
+        <input type="text" name="project_name" required>
     </div>
 
     <div class="input-group">
         <label>Description</label>
-        <textarea name="project_description[]"></textarea>
+        <textarea name="project_description" required></textarea>
     </div>
+    <button type="button"
+                class="delete-btn"
+                onclick="removeCard(this)">
+            Delete
+    </button>
 
 </div>
 `;

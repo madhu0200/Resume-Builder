@@ -32,4 +32,46 @@ class EductaionDetails(models.Model):
     cgpa=models.IntegerField(max_length=3)
     
     def __str__(self):
-        return self.user.username
+        return self.user.username+" " +self.course
+    
+
+class SkillsDetails(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
+    key=models.CharField(max_length=100)
+    value=models.CharField(max_length=100)
+    
+    
+    def __str__(self):
+        return self.user.username+" "+self.key
+    
+
+class ProfessionDetails(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
+    company=models.CharField(max_length=100)
+    exp_from=models.DateField()
+    exp_to=models.DateField()
+    
+    location=models.CharField(max_length=100)
+    description=models.CharField(max_length=300)
+    
+    def __str__(self):
+        return self.user.username+" "+self.company
+    
+
+class ProjectDetails(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
+    name=models.CharField(max_length=100)
+    description=models.CharField(max_length=300)
+    
+    
+    def __str__(self):
+        return self.user.username+" "+self.name

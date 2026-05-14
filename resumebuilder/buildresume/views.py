@@ -10,9 +10,17 @@ from .models import *
 def home(request):
     if request.method=='GET':
         current_user=request.user
-        personal_details=PersonalDetails.objects.filter(user=current_user)
+        personal_details=PersonalDetails.objects.filter(user=current_user).first()
         education_details=EductaionDetails.objects.filter(user=current_user)
-        return render(request,'buildresume/home.html',{'personal_details':personal_details,'education_details':education_details})
+        skills_details=SkillsDetails.objects.filter(user=current_user)
+        profession_details=ProfessionDetails.objects.filter(user=current_user)
+        project_details=ProjectDetails.objects.filter(user=current_user)
+
+        return render(request,'buildresume/home.html',{'personal_details':personal_details,
+                                                       'education_details':education_details,
+                                                       'skills_details':skills_details,
+                                                       'professional_details':profession_details,
+                                                       'project_details':project_details})
     
 
 
@@ -58,50 +66,164 @@ def personal_details(request):
 @login_required
 def education_details(request):
     if request.method == 'POST':
-        current_user = request.user
+        user = request.user
 
+        # Collect lists of values from the form
         courses = request.POST.getlist('course')
+        colleges = request.POST.getlist('college')
         edu_froms = request.POST.getlist('edu_from')
         edu_tos = request.POST.getlist('edu_to')
-        colleges = request.POST.getlist('college')
         cgpas = request.POST.getlist('cgpa')
 
-        errors = []
-        for i in range(len(courses)):
-            course = courses[i].strip()
-            edu_from = edu_froms[i].strip()
-            edu_to = edu_tos[i].strip()
-            college = colleges[i].strip()
-            cgpa = cgpas[i].strip()
+        # Existing records in DB
+        existing_records = list(EductaionDetails.objects.filter(user=user))
 
-            # ✅ Validation
-            if not course or not college:
-                errors.append(f"Record {i+1}: Course and College are required.")
-                continue
-            if edu_from and edu_to and edu_from > edu_to:
-                errors.append(f"Record {i+1}: 'From' date cannot be after 'To' date.")
-                continue
+        # Case 1 & 2: Update existing records up to the number of UI entries
+        for i in range(min(len(existing_records), len(courses))):
+            record = existing_records[i]
+            record.course = courses[i]
+            record.college = colleges[i]
+            record.edu_from = edu_froms[i]
+            record.edu_to = edu_tos[i]
+            record.cgpa = cgpas[i]
+            record.save()
 
-            # ✅ Save record
-            EductaionDetails.objects.update_or_create(
-                user=current_user,
-                course=course,
-                college=college,
-                defaults={
-                    'edu_from': edu_from,
-                    'edu_to': edu_to,
-                    'cgpa': cgpa,
-                }
-            )
+        # Case 3: If UI has more, create new records
+        if len(courses) > len(existing_records):
+            for i in range(len(existing_records), len(courses)):
+                EductaionDetails.objects.create(
+                    user=user,
+                    course=courses[i],
+                    college=colleges[i],
+                    edu_from=edu_froms[i],
+                    edu_to=edu_tos[i],
+                    cgpa=cgpas[i]
+                )
 
-        if errors:
-            for e in errors:
-                messages.error(request, e)
-        else:
-            messages.success(request, "Education details updated successfully")
+        # Case 1: If DB has more, delete extras
+        elif len(existing_records) > len(courses):
+            for i in range(len(courses), len(existing_records)):
+                existing_records[i].delete()
 
+        messages.success(request, "Education details updated successfully")
         return redirect('home')
+    
 
-   
-        
-   
+
+@login_required
+def skills_details(request):
+    if request.method == 'POST':
+        user = request.user
+
+        # Collect lists of values from the form
+        keys = request.POST.getlist('key')
+        values = request.POST.getlist('value')
+
+        # Existing records in DB
+        existing_records = list(SkillsDetails.objects.filter(user=user))
+
+        # Case 1 & 2: Update existing records up to the number of UI entries
+        for i in range(min(len(existing_records), len(keys))):
+            record = existing_records[i]
+            record.key = keys[i]
+            record.value = values[i]
+            record.save()
+
+        # Case 3: If UI has more, create new records
+        if len(keys) > len(existing_records):
+            for i in range(len(existing_records), len(keys)):
+                SkillsDetails.objects.create(
+                    user=user,
+                    key=keys[i],
+                    value=values[i],
+                )
+
+        # Case 1: If DB has more, delete extras
+        elif len(existing_records) > len(keys):
+            for i in range(len(keys), len(existing_records)):
+                existing_records[i].delete()
+
+        messages.success(request, "skills details updated successfully")
+        return redirect('home')
+    
+
+@login_required
+def professional_details(request):
+    if request.method == 'POST':
+        user = request.user
+
+        # Collect lists of values from the form
+        companies = request.POST.getlist('company')
+        exp_froms = request.POST.getlist('exp_from')
+        exp_tos = request.POST.getlist('exp_to')
+        locations = request.POST.getlist('company_location')
+        descriptions = request.POST.getlist('experience_description')
+        print(companies,exp_froms,exp_tos,locations,descriptions)
+        # Existing records in DB
+        existing_records = list(ProfessionDetails.objects.filter(user=user))
+
+        # Case 1 & 2: Update existing records up to the number of UI entries
+        for i in range(min(len(existing_records), len(companies))):
+            record = existing_records[i]
+            record.company = companies[i]
+            record.exp_from = exp_froms[i]
+            record.exp_to = exp_tos[i]
+            record.location = locations[i]
+            record.description = descriptions[i]
+            record.save()
+
+        # Case 3: If UI has more, create new records
+        if len(companies) > len(existing_records):
+            for i in range(len(existing_records), len(companies)):
+                ProfessionDetails.objects.create(
+                    user=user,
+                    company=companies[i],
+                    exp_from=exp_froms[i],
+                    exp_to=exp_tos[i],
+                    location=locations[i],
+                    description=descriptions[i]
+                )
+
+        # Case 1: If DB has more, delete extras
+        elif len(existing_records) > len(companies):
+            for i in range(len(companies), len(existing_records)):
+                existing_records[i].delete()
+
+        messages.success(request, "Professional details updated successfully")
+        return redirect('home')
+    
+@login_required
+def project_details(request):
+    if request.method == 'POST':
+        user = request.user
+
+        # Collect lists of values from the form
+        names = request.POST.getlist('project_name')
+        descriptions = request.POST.getlist('project_description')
+
+        # Existing records in DB
+        existing_records = list(ProjectDetails.objects.filter(user=user))
+
+        # Case 1 & 2: Update existing records up to the number of UI entries
+        for i in range(min(len(existing_records), len(names))):
+            record = existing_records[i]
+            record.name = names[i]
+            record.description = descriptions[i]
+            record.save()
+
+        # Case 3: If UI has more, create new records
+        if len(names) > len(existing_records):
+            for i in range(len(existing_records), len(names)):
+                ProjectDetails.objects.create(
+                    user=user,
+                    name=names[i],
+                    description=descriptions[i],
+                )
+
+        # Case 1: If DB has more, delete extras
+        elif len(existing_records) > len(names):
+            for i in range(len(names), len(existing_records)):
+                existing_records[i].delete()
+
+        messages.success(request, "projects details updated successfully")
+        return redirect('home')
