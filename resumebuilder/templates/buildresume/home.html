@@ -42,6 +42,11 @@
                 Projects
             </li>
 
+           <li onclick="window.location.href='{% url 'buildresume' %}'">
+    Show Resume
+</li>
+
+
         </ul>
 
     </div>
@@ -325,7 +330,7 @@
                 </div>
                 <div class="input-group">
                     <label>Description</label>
-                    <textarea name="experience_description">{{ experience.description }}</textarea>
+                    <textarea name="experience_description" maxlength="300">{{ experience.description }}</textarea>
                 </div>
                 {% if not forloop.first %}
                     <button type="button" class="delete-btn" onclick="removeCard(this)">Delete</button>
@@ -354,7 +359,7 @@
             </div>
             <div class="input-group">
                 <label>Description</label>
-                <textarea name="experience_description"></textarea>
+                <textarea name="experience_description" maxlength="300"></textarea>
             </div>
         </div>
     {% endif %}

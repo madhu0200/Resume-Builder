@@ -1,0 +1,107 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title> Resume</title>
+    <link rel="stylesheet" href="{% static 'buildresume/ResumeTemplate1.css' %}" >
+    <link href="https://fonts.googleapis.com/css?family=Merriweather:300,400,700|Source+Sans+Pro:400,400i"
+        rel="stylesheet">
+
+<body>
+    <div class="page">
+        <div class="section row">
+            <h1 class="col">{{personal_details.FullName}}</h1>
+            <div class="contact-info col-right">
+                <div>{{personal_details.mobile}}</div>
+                <div><a href="mailto:{{personal_details.email}}">{{personal_details.email}}</a></div>
+                <div><a href="{{personal_details.gitLink}}" target="_blank">gitLink</a></div>
+            </div>
+        </div>
+        <div class="section row">
+            <h2 class="col">professional Summary</h2>
+            <div class="section-text col-right">{{personal_details.professionSummary}} </div>
+        </div>
+        <div class="section row">
+            <h2 class="col">Skills</h2>
+            <div class="section-text col-right">
+                 {% for skills in skills_details %}
+              
+                {% for value in skills.value %}
+                <span class="key">{{value}}</span>
+                   
+                {%endfor%}
+                
+                {%endfor%}
+                
+                
+            </div>
+        </div>
+        <div class="section row">
+            <h2 class="col">Education</h2>
+            <div class="section-text col-right">
+                {% for education in education_details %}
+                    <h3><span class="emph">{{education.Degree}}</span> in {{education.course}} </h3>
+                     <div>{{education.college}}</div>
+                     <div class="row">
+                        <div class="col light">{{education.location}}</div>
+                        <div class="col-right light">{{education.edu_from}} - {{education.edu_to}}</div>
+                    </div>
+                {%endfor%}
+                
+            </div>
+        </div>
+        <div class="section row">
+            <h2 class="col">Experience</h2>
+            {% for experience in professional_details %}
+             <div class="section-text col-right">
+                <div class="row">
+                    <div class="col">
+                        <h3>{{experience.company}}</h3>
+                    </div>
+                </div>
+                <div class="row subsection">
+                    <div class="emph col">{{experience.role}}</div>
+                    <div class="col-right light">{{experience.exp_from}} - {{experience.exp_to}}</div>
+                </div>
+                <ul class="desc">
+                    {% for desc in experience.description%}
+                    
+                    <li>{{desc}}</li>
+                   
+                    {%endfor%}
+                </ul>
+            </div>
+            {%endfor%}
+        </div>
+        <div class="section row">
+            <h2 class="col">Projects</h2>
+                {% for project in project_details %}
+             <div class="section-text col-right">
+                <div class="row">
+                    <div class="col">
+                        <h3>{{project.name}}</h3>
+                    </div>
+                </div>
+                
+                <ul class="desc">
+                    {% for desc in project.description%}
+                    
+                    <li>{{desc}}</li>
+                   
+                    {%endfor%}
+                </ul>
+            </div>
+            {%endfor%}
+            </div
+        </div>
+
+       
+    </div>
+    {% if not hide_download %}
+<a href="{% url 'download_resume' 1 %}" class="download-btn">Download</a>
+{% endif %}
+</body>
+
+</html>

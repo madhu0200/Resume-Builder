@@ -24,12 +24,14 @@ class EductaionDetails(models.Model):
         User,
         on_delete=models.CASCADE
     )
+    Degree=models.CharField(max_length=50,default='Null')
     course=models.CharField(max_length=100)
     edu_from=models.DateField()
     edu_to=models.DateField()
+    location=models.CharField(max_length=100,default='Null')
     
     college=models.CharField(max_length=100)
-    cgpa=models.IntegerField(max_length=3)
+    cgpa=models.FloatField(max_length=3)
     
     def __str__(self):
         return self.user.username+" " +self.course
@@ -55,11 +57,11 @@ class ProfessionDetails(models.Model):
     )
     company=models.CharField(max_length=100)
     exp_from=models.DateField()
-    exp_to=models.DateField()
+    exp_to=models.CharField(max_length=20)
     
     location=models.CharField(max_length=100)
-    description=models.CharField(max_length=300)
-    
+    description=models.CharField(max_length=1200)
+    role=models.CharField(max_length=40,default='Null')
     def __str__(self):
         return self.user.username+" "+self.company
     
@@ -70,7 +72,7 @@ class ProjectDetails(models.Model):
         on_delete=models.CASCADE
     )
     name=models.CharField(max_length=100)
-    description=models.CharField(max_length=300)
+    description=models.CharField(max_length=1200)
     
     
     def __str__(self):

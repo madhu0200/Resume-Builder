@@ -3,6 +3,8 @@ from django.contrib.auth.decorators import login_required
 import re
 from django.contrib import messages
 from .models import *
+from django.template.loader import get_template
+import pdfkit
 
 
 # Create your views here.
@@ -227,3 +229,87 @@ def project_details(request):
 
         messages.success(request, "projects details updated successfully")
         return redirect('home')
+    
+@login_required
+def buildresume(request):
+    current_user=request.user
+    if request.method=='GET':
+        personal_details=PersonalDetails.objects.filter(user=current_user).first()
+        education_details=EductaionDetails.objects.filter(user=current_user)
+        skills_details=SkillsDetails.objects.filter(user=current_user)
+        for skills in skills_details:
+            skills.value=skills.value.split(',')
+
+        
+        profession_details=ProfessionDetails.objects.filter(user=current_user)
+
+        for experience in profession_details:
+            experience.description=[desc.strip() for desc in experience.description.split('_') if desc!='']
+            
+            print(experience.description)
+        project_details=ProjectDetails.objects.filter(user=current_user)
+
+        for project in project_details:
+            project.description=[desc.strip() for desc in project.description.split('_') if desc!='']
+            
+            print(project.description)
+
+        return render(request,'buildresume/ResumeTemplate1.html',{'personal_details':personal_details,
+                                                       'education_details':education_details,
+                                                       'skills_details':skills_details,
+                                                       'professional_details':profession_details,
+                                                       'project_details':project_details})
+@login_required
+def download_resume(request,template_id):
+    current_user=request.user
+    if template_id==1:
+        try:
+            personal_details=PersonalDetails.objects.filter(user=current_user).first()
+            education_details=EductaionDetails.objects.filter(user=current_user)
+            skills_details=SkillsDetails.objects.filter(user=current_user)
+            for skills in skills_details:
+                skills.value=skills.value.split(',')
+
+            
+            profession_details=ProfessionDetails.objects.filter(user=current_user)
+
+            for experience in profession_details:
+                experience.description=[desc.strip() for desc in experience.description.split('_') if desc!='']
+                
+               
+            project_details=ProjectDetails.objects.filter(user=current_user)
+
+            for project in project_details:
+                project.description=[desc.strip() for desc in project.description.split('_') if desc!='']
+                
+                
+
+        
+
+            template = get_template(f'buildresume/ResumeTemplate{template_id}.html')
+            html = template.render({
+                'personal_details': personal_details,
+                'education_details': education_details,
+                'skills_details': skills_details,
+                'professional_details': profession_details,
+                'project_details': project_details,
+                'hide_download': True,
+            })
+
+            path_wkhtmltopdf = r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"
+            config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
+
+            css_path = r"F:\\Git\\Resume-Builder\\resumebuilder\\static\\buildresume\\ResumeTemplate1.css"
+            pdf = pdfkit.from_string(html, False, configuration=config, options={'enable-local-file-access': None}, css=css_path)
+
+    
+
+
+            response = HttpResponse(pdf, content_type='application/pdf')
+            response['Content-Disposition'] = f'attachment; filename="resume_template_{template_id}.pdf"'
+            return response
+
+        except Exception as e:
+            return HttpResponse(f"Error generating resume: {e}", content_type="text/plain")
+        
+    
