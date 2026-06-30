@@ -32,3 +32,7 @@ The application utilizes a relational database structure designed to maintain cl
    ```bash
    git clone [https://github.com/yourusername/django-resume-builder.git](https://github.com/yourusername/django-resume-builder.git)
    cd django-resume-builder
+
+## project screenshots
+<img width="745" height="506" alt="Screenshot 2026-06-30 191308" src="https://github.com/user-attachments/assets/79069837-04ad-4830-9d78-a914d0f7b335" />
+
