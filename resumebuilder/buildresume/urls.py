@@ -25,8 +25,8 @@ urlpatterns = [
     path('skills_details',views.skills_details,name='skills_details'),
     path('professional_details',views.professional_details,name='professional_details'),
     path('project_details',views.project_details,name='project_details'),
-    path('buildresume',views.buildresume,name='buildresume'),
-   
+    path('ResumeShowCase',views.resume_showcase,name='ResumeShowCase'),
+    path('ResumeTemplateImage<int:template_id>',views.buildresume,name='ResumeTemplateImage'),
     path('resume_download_<int:template_id>', views.download_resume, name='download_resume'),
 
 

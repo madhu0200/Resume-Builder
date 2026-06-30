@@ -5,6 +5,11 @@ from django.contrib import messages
 from .models import *
 from django.template.loader import get_template
 import pdfkit
+import os
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+print(BASE_DIR)
 
 
 # Create your views here.
@@ -230,8 +235,16 @@ def project_details(request):
         messages.success(request, "projects details updated successfully")
         return redirect('home')
     
+
 @login_required
-def buildresume(request):
+def resume_showcase(request):
+    if request.method=='GET':
+        
+        image_urls=os.listdir(os.path.join(BASE_DIR,"static","images"))
+        return render(request,'buildresume/ResumeShowCase.html',{'image_links':image_urls})
+    
+@login_required
+def buildresume(request,template_id):
     current_user=request.user
     if request.method=='GET':
         personal_details=PersonalDetails.objects.filter(user=current_user).first()
@@ -254,7 +267,7 @@ def buildresume(request):
             
             print(project.description)
 
-        return render(request,'buildresume/ResumeTemplate1.html',{'personal_details':personal_details,
+        return render(request,f'buildresume/ResumeTemplate{template_id}.html',{'personal_details':personal_details,
                                                        'education_details':education_details,
                                                        'skills_details':skills_details,
                                                        'professional_details':profession_details,
@@ -262,7 +275,7 @@ def buildresume(request):
 @login_required
 def download_resume(request,template_id):
     current_user=request.user
-    if template_id==1:
+    if request.method=='GET':
         try:
             personal_details=PersonalDetails.objects.filter(user=current_user).first()
             education_details=EductaionDetails.objects.filter(user=current_user)
@@ -299,7 +312,8 @@ def download_resume(request,template_id):
             path_wkhtmltopdf = r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"
             config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
 
-            css_path = r"F:\\Git\\Resume-Builder\\resumebuilder\\static\\buildresume\\ResumeTemplate1.css"
+            css_path = os.path.join(BASE_DIR,f"static\\buildresume\\ResumeTemplate{template_id}.css")
+            
             pdf = pdfkit.from_string(html, False, configuration=config, options={'enable-local-file-access': None}, css=css_path)
 
     
