@@ -35,7 +35,6 @@ The application utilizes a relational database structure designed to maintain cl
 
 ## Project Screenshots
 <img width="745" height="506" alt="Screenshot 2026-06-30 191308" src="https://github.com/user-attachments/assets/79069837-04ad-4830-9d78-a914d0f7b335" />
-<img width="273" height="382" alt="Screenshot 2026-06-30 191316" src="https://github.com/user-attachments/assets/aed3e65d-ebf7-4497-a777-91b7fbe0970b" />
 <img width="1877" height="737" alt="Screenshot 2026-06-30 191039" src="https://github.com/user-attachments/assets/09156721-5653-44cb-b2bf-618889f58d7e" />
 <img width="1815" height="876" alt="Screenshot 2026-06-30 191059" src="https://github.com/user-attachments/assets/d087159b-c240-4883-a935-18013d92b697" />
 <img width="1902" height="852" alt="Screenshot 2026-06-30 191114" src="https://github.com/user-attachments/assets/4cf80e31-4b26-4be7-96da-7b6158c1abe3" />
